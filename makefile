@@ -9,9 +9,12 @@ allCaps.o:
 generatePre.o:
 	g++ -g -c -std=c++11 generatePre.cpp
 
-tradutor: trimfunc.o allCaps.o generatePre.o tradutor.cpp
-	g++ -Wall -o tradutor trimfunc.o allCaps.o generatePre.o tradutor.cpp
-	rm trimfunc.o allCaps.o generatePre.o
+translate.o:
+	g++ -g -c -std=c++11 translate.cpp
+
+tradutor: trimfunc.o allCaps.o generatePre.o translate.o tradutor.cpp
+	g++ -Wall -o tradutor trimfunc.o allCaps.o generatePre.o translate.o tradutor.cpp
+	rm trimfunc.o allCaps.o generatePre.o translate.o
 
 clean: 
 	rm tradutor

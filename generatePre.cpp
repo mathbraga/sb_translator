@@ -8,21 +8,21 @@
 #include "allCaps.hpp"
 using namespace std;
 
-void generatePre(string filename){
-    fstream infile, outfile, preEQU, preMACRO, preExpand;
-    string line, aux, ext = ".asm";
-    int len = 0, st_flag = 0, sd_flag = 0, if_flag = 1, exp_flag = 0, size = 0;
+string generatePre(string filename){
+    fstream infile, outfile, preEQU;
+    string line, ext = ".asm";
+    int st_flag = 0, if_flag = 1;
     size_t found;
     map<string, string> labelsMap;
-    map<string, int> macroBody;
-    map<string, int> macroArgsCount;
-    map<string, string> macroArgs;
+    // map<string, int> macroBody;
+    // map<string, int> macroArgsCount;
+    // map<string, string> macroArgs;
 
     infile.open(filename, std::fstream::in | std::fstream::out);
 
     if(!infile){
         cerr << "File not found." << endl;
-        return;
+        exit(EXIT_FAILURE);
     }
 
     found = filename.rfind(ext);
@@ -57,7 +57,7 @@ void generatePre(string filename){
                 treatEQU(line, preEQU, labelsMap);
             }
         }
-        else if(st_flag && (line != "SECTION TEXT") && (line != "SECTION DATA")){
+        else if(st_flag){
             line = subsLabel(line, labelsMap);
             if(isIF(line))
                 if_flag = evalIF(line, preEQU);
@@ -112,6 +112,8 @@ void generatePre(string filename){
     remove("preEQU.txt");
     // remove("preMACRO.txt");
     // remove("preExpand.txt");
+
+    return filename;
 }
 
 void treatEQU(string line, fstream& file, map<string, string>& labelsMap){ //Check EQU on current or next line and associate value to label with map
