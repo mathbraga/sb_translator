@@ -4,6 +4,7 @@ _msg1 db "Foram lidos "
 _msg1_s EQU $-_msg1
 _msg2 db " caracteres.", 0dh, 0ah
 _msg2_s EQU $-_msg2
+_test dd 5, 9
 
 section .bss
 TMP_DATA resd 1
@@ -12,6 +13,8 @@ _result resd 1
 
 section .text
 _start:
+mov eax, [_test+4]
+_here:
 ;------------------------------------ INPUT
 push TMP_DATA
 call LeerInteiro
@@ -67,7 +70,33 @@ mov bl, [_bufferData+esi]
 jmp _positive
 _endLeer:
 push eax
-mov eax, DWORD [_bufferData]
+mov eax, 0
+mov esi, 0
+mov ecx, 4
+mov ebx, 0
+mov edx, 10
+_converteint:
+mov bl, [_bufferData+esi]
+cmp bl, 0x2d
+je _skipneg
+cmp bl, 0x0a
+je _endconvert
+sub bx, 0x30
+mul dl
+add al, bl
+inc esi
+loop _converteint
+_skipneg:
+inc esi
+jmp _converteint
+_endconvert:
+mov bl, [_bufferData]
+cmp bl, 0x2d
+jne _returnconvert
+mov ecx, 0xFFFFFFFF
+xor eax, ecx
+add eax, 1
+_returnconvert:
 mov ebx, [EBP + 8]
 mov [ebx], eax
 pop eax
@@ -80,7 +109,8 @@ leave
 ret 4
 ;-------------------------------------
 
-_output:
+;---------------------------------
+EscreverInteiro:
 enter 0,0
 mov eax, 4
 mov ebx, 1
@@ -89,3 +119,4 @@ mov edx, 5
 int 80h
 leave
 ret
+;---------------------------------
