@@ -1,13 +1,3 @@
-section .data
-_msg1 db "Foram lidos "
-_msg1_s EQU $-_msg1
-_msg2 db " caracteres.", 0dh, 0ah
-_msg2_s EQU $-_msg2
-
-section .bss
-_bufferData resb 5
-_aux resb 5
-_result resd 1
 
 LeerInteiro:
 enter 0,0

@@ -6,8 +6,8 @@
 using namespace std;
 
 void translate(string filename){
-    fstream infile, outfile;
-    string ext = ".pre", line, aux, rot;
+    fstream infile, outfile, dataToFile, funcToFile;
+    string ext = ".pre", line, aux = "", aux2 = "", rot, param = "";
     size_t found;
     int sd_flag = 0, bss_flag = 0, data_flag = 0;
     map<string, int> inst_code;
@@ -26,6 +26,11 @@ void translate(string filename){
 
     outfile.open(filename, fstream::in | fstream::out | fstream::trunc);
     outfile << "global _start" << endl;
+
+    dataToFile.open("dataToFile.txt", std::fstream::in | std::fstream::out);
+    while(getline(dataToFile, line))
+        outfile << line << endl;
+    dataToFile.close();
 
     while(getline(infile, line)){
         if(line == "SECTION DATA")
@@ -72,8 +77,28 @@ void translate(string filename){
 
     do{
         getline(infile, line);
-        if()
+        if((found = line.find(":")) != string::npos){
+            if(line.length() == found + 1)
+                outfile << line << endl;
+            else{
+                outfile << line.substr(0, found + 1) << endl;
+                aux = line.substr(line.find(" ") + 1, line.length());
+                aux2 = aux.substr(0, aux.find(" "));
+                param = aux.substr(aux.find(" ") + 1, aux.length());
+                translate_inst(aux2, inst_code, outfile, param);
+            }
+        }
+        else{
+            aux = line.substr(0, line.find(" "));
+            param = line.substr(line.find(" ") + 1, line.length());
+            translate_inst(aux, inst_code, outfile, param);
+        }
     }while(line != "SECTION DATA");
+
+    funcToFile.open("funcToFile.txt", std::fstream::in | std::fstream::out);
+    while(getline(funcToFile, line))
+        outfile << line << endl;
+    funcToFile.close();
 
     infile.close();
     outfile.close();
@@ -102,6 +127,20 @@ void translate_inst(string inst, map<string, int>& inst_code, fstream& outfile, 
             outfile << "mov edx, _msg2_s" << endl;
             outfile << "int 80h" << endl;
             outfile << "pop eax" << endl;
+            break;
+        case 13:
+            outfile << "push eax" << endl;
+            outfile << "push DWORD " << "[" << param << "]" << endl;
+            outfile << "call EscreverInteiro" << endl;
+            outfile << "pop eax" << endl;
+            break;
+        case 18:
+            outfile << "mov eax, 1" << endl;
+            outfile << "mov ebx, 0" << endl;
+            outfile << "int 80h" << endl;
+            break;
+        default:
+            outfile << "";
     }
 }
 
