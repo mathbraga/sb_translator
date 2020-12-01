@@ -144,6 +144,22 @@ void translate_inst(string inst, map<string, int>& inst_code, fstream& outfile, 
             outfile << "call EscreverChar" << endl;
             outfile << "pop eax" << endl;
             break;
+        case 16:
+            outfile << "push eax ; S_INPUT" << endl;
+            outfile << "push " << param.substr(0, param.find(",")) << endl;
+            outfile << "push DWORD " << param.substr(param.find(" ") + 1, param.length()) << endl;
+            outfile << "call LeerString" << endl;
+            outfile << "mov [_result], eax" << endl;
+            outfile << "call _displayNchars" << endl;
+            outfile << "pop eax" << endl;
+            break;
+        case 17:
+            outfile << "push eax ; S_OUTPUT" << endl;
+            outfile << "push " << param.substr(0, param.find(",")) << endl;
+            outfile << "push DWORD " << param.substr(param.find(" ") + 1, param.length()) << endl;
+            outfile << "call EscreverString" << endl;
+            outfile << "pop eax" << endl;
+            break;
         case 18:
             outfile << "mov eax, 1 ; STOP" << endl;
             outfile << "mov ebx, 0" << endl;
