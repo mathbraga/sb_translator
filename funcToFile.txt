@@ -200,3 +200,63 @@ pop edx
 pop ecx
 leave
 ret 4
+
+LeerString:
+enter 0,0
+push ecx
+push edx
+push ebx
+push esi
+mov eax, 3
+mov ebx, 2
+mov ecx, [EBP + 12] ; param1
+mov edx, [EBP + 8] ; param2
+int 80h
+mov eax, [EBP + 12] ; param1
+mov ecx, [EBP + 8] ; param2
+mov esi, 0
+_loopString:
+mov bl, [eax + esi]
+cmp bl, 0x0a
+je _endLeerString
+inc esi
+loop _loopString
+_endLeerString:
+mov eax, esi
+add eax, 0x30
+pop esi
+pop ebx
+pop edx
+pop ecx
+leave
+ret 8
+
+EscreverString:
+enter 0,0
+push ecx
+push edx
+push ebx
+push esi
+mov eax, 4
+mov ebx, 1
+mov ecx, [EBP + 12] ; param1
+mov edx, [EBP + 8] ; param2
+int 80h
+mov eax, [EBP + 12] ; param1
+mov ecx, [EBP + 8] ; param2
+mov esi, 0
+_loopEscString:
+mov bl, [eax + esi]
+cmp bl, 0x0a
+je _endLeerString
+inc esi
+loop _loopString
+_endEscString:
+mov eax, esi
+add eax, 0x30
+pop esi
+pop ebx
+pop edx
+pop ecx
+leave
+ret 8
