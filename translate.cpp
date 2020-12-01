@@ -121,27 +121,27 @@ void translate_inst(string inst, map<string, int>& inst_code, fstream& outfile, 
             outfile << "push " << param << endl;
             outfile << "call LeerInteiro" << endl;
             outfile << "mov [_result], eax" << endl;
-            outfile << "mov eax, 4" << endl;
-            outfile << "mov ebx, 1" << endl;
-            outfile << "mov ecx, _msg1" << endl;
-            outfile << "mov edx, _msg1_s" << endl;
-            outfile << "int 80h" << endl;
-            outfile << "mov eax, 4" << endl;
-            outfile << "mov ebx, 1" << endl;
-            outfile << "mov ecx, _result" << endl;
-            outfile << "mov edx, 4" << endl;
-            outfile << "int 80h" << endl;
-            outfile << "mov eax, 4" << endl;
-            outfile << "mov ebx, 1" << endl;
-            outfile << "mov ecx, _msg2" << endl;
-            outfile << "mov edx, _msg2_s" << endl;
-            outfile << "int 80h" << endl;
+            outfile << "call _displayNchars" << endl;
             outfile << "pop eax" << endl;
             break;
         case 13:
             outfile << "push eax ; OUTPUT" << endl;
             outfile << "push DWORD " << "[" << param << "]" << endl;
             outfile << "call EscreverInteiro" << endl;
+            outfile << "pop eax" << endl;
+            break;
+        case 14:
+            outfile << "push eax ; C_INPUT" << endl;
+            outfile << "push " << param << endl;
+            outfile << "call LeerChar" << endl;
+            outfile << "mov [_result], eax" << endl;
+            outfile << "call _displayNchars" << endl;
+            outfile << "pop eax" << endl;
+            break;
+        case 15:
+            outfile << "push eax ; C_OUTPUT" << endl;
+            outfile << "push DWORD " << "[" << param << "]" << endl;
+            outfile << "call EscreverChar" << endl;
             outfile << "pop eax" << endl;
             break;
         case 18:
