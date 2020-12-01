@@ -105,9 +105,19 @@ void translate(string filename){
 }
 
 void translate_inst(string inst, map<string, int>& inst_code, fstream& outfile, string param){
+    size_t found;
+    string num;
+    int val;
+
+    if(found = param.find(" + ") != string::npos){
+        num = param.substr(param.rfind(" ") + 1, param.length());
+        val = stoi(num) * 4;
+        param.replace(param.rfind(" ") + 1, num.length(), to_string(val));
+    }
+
     switch(inst_code[inst]){
         case 12:
-            outfile << "push eax" << endl;
+            outfile << "push eax ; INPUT" << endl;
             outfile << "push " << param << endl;
             outfile << "call LeerInteiro" << endl;
             outfile << "mov [_result], eax" << endl;
@@ -129,13 +139,13 @@ void translate_inst(string inst, map<string, int>& inst_code, fstream& outfile, 
             outfile << "pop eax" << endl;
             break;
         case 13:
-            outfile << "push eax" << endl;
+            outfile << "push eax ; OUTPUT" << endl;
             outfile << "push DWORD " << "[" << param << "]" << endl;
             outfile << "call EscreverInteiro" << endl;
             outfile << "pop eax" << endl;
             break;
         case 18:
-            outfile << "mov eax, 1" << endl;
+            outfile << "mov eax, 1 ; STOP" << endl;
             outfile << "mov ebx, 0" << endl;
             outfile << "int 80h" << endl;
             break;
