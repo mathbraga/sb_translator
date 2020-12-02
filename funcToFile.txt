@@ -28,7 +28,7 @@ push edx
 push ebx
 push esi
 mov eax, 3
-mov ebx, 2
+mov ebx, 0
 mov ecx, _bufferData
 mov edx, 5
 int 80h
@@ -161,7 +161,7 @@ push ecx
 push edx
 push ebx
 mov eax, 3
-mov ebx, 2
+mov ebx, 0
 mov ecx, _bufferData
 mov edx, 2
 int 80h
@@ -230,7 +230,7 @@ and DWORD [ebx + esi], 0x00000000
 add esi, 4
 loop _cleanStringBuffer
 mov eax, 3
-mov ebx, 2
+mov ebx, 0
 mov ecx, [EBP + 12] ; param1
 mov edx, [EBP + 8] ; param2
 int 80h
