@@ -139,6 +139,11 @@ void translate_inst(string inst, map<string, int>& inst_code, fstream& outfile, 
         case 2: 
             outfile << "sub eax, DWORD [" << param << "] ; SUB" << endl;
             break;
+        case 3:
+            outfile << "mov ebx, DWORD [" << param << "] ; MULT" << endl;
+            outfile << "imul ebx" << endl;
+            outfile << "jo _overflow" << endl;
+            break;
         case 4:
             outfile << "cdq ;DIV" << endl;
             outfile << "mov ebx, DWORD [" << param << "]" << endl;

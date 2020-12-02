@@ -328,3 +328,13 @@ pop edx
 pop ecx
 leave
 ret 8
+
+_overflow:
+mov eax, 4
+mov ebx, 1
+mov ecx, _msgof
+mov edx, _msgof_s
+int 80h
+mov eax, 1
+mov ebx, 0
+int 80h

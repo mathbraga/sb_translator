@@ -3,6 +3,8 @@ _msg1 db "Foram lidos "
 _msg1_s EQU $-_msg1
 _msg2 db " caracteres.", 0dh, 0ah
 _msg2_s EQU $-_msg2
+_msgof db "Erro! Operação causou overflow!" , 0dh, 0ah
+_msgof_s EQU $-_msgof
 
 section .bss
 _bufferData resb 5
