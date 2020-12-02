@@ -9,5 +9,7 @@ _msgof_s EQU $-_msgof
 section .bss
 _bufferData resb 5
 _aux resb 5
+_auxEsc resd 3
+_bufferEsc resd 3
 _result resd 1
 

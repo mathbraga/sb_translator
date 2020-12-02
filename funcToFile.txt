@@ -91,16 +91,18 @@ ret 4
 
 EscreverInteiro:
 enter 0,0
-mov DWORD [_bufferData], 0
-mov BYTE [_bufferData + 4], 0
-mov DWORD [_aux], 0
-mov BYTE [_aux + 4], 0
+mov DWORD [_auxEsc], 0
+mov DWORD [_auxEsc + 4], 0
+mov DWORD [_auxEsc + 8], 0
+mov DWORD [_bufferEsc], 0
+mov DWORD [_bufferEsc + 4], 0
+mov DWORD [_bufferEsc + 8], 0
 push ebx
 push ecx
 push edx
 push esi
 mov esi, 0
-mov ecx, 3
+mov ecx, 10
 mov eax, [EBP + 8]
 cmp eax, 0
 jl _converttopos
@@ -109,7 +111,7 @@ mov edx, 0
 mov ebx, 10
 div ebx
 add dl, 0x30
-mov [_aux + esi], dl
+mov [_auxEsc + esi], dl
 cmp eax, 0
 je _convertsymbol
 inc esi
@@ -123,18 +125,18 @@ mov eax, [EBP + 8]
 cmp eax, 0
 jge _invertstr
 inc esi
-mov BYTE [_aux + esi], '-'
+mov BYTE [_auxEsc + esi], '-'
 _invertstr:
 mov ecx, 0
 _loopiteration:
-mov bl, [_aux + esi]
-mov [_bufferData + ecx], bl
+mov bl, [_auxEsc + esi]
+mov [_bufferEsc + ecx], bl
 dec esi
 inc ecx
 cmp esi, 0
 jge _loopiteration
-mov BYTE [_bufferData + ecx], 0x0a
-cmp BYTE [_bufferData], 0x2d
+mov BYTE [_bufferEsc + ecx], 0x0a
+cmp BYTE [_bufferEsc], 0x2d
 jne _endescrever
 dec ecx
 _endescrever:
@@ -142,8 +144,8 @@ mov eax, ecx
 push eax
 mov eax, 4
 mov ebx, 1
-mov ecx, _bufferData
-mov edx, 5
+mov ecx, _bufferEsc
+mov edx, 12
 int 80h
 pop eax
 pop esi
