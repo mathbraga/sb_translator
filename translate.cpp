@@ -52,13 +52,13 @@ void translate(string filename){
                     outfile << aux << endl;
                 }
                 
-                if((found = line.find("SPACE")) != string::npos){
+                if((found = line.find(" SPACE")) != string::npos){
                     data_flag = 0;
                     if(!bss_flag){
                         bss_flag = 1;
                         outfile << "section .bss" << endl;
                     }
-                    if((found = line.find(" + ")) != string::npos)
+                    if((found = line.find("SPACE ")) != string::npos)
                         aux = rot + " resd " + line.substr(line.rfind(" ") + 1, line.length());
                     else
                         aux = rot + " resd 1";
