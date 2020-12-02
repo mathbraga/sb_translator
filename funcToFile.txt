@@ -170,8 +170,13 @@ mov al, [_bufferData]
 cbw
 cwde
 mov [ebx], eax
-mov eax, 1
-add eax, 0x30
+cmp eax, 0x0a
+je _retZero
+mov eax, '1'
+jmp _endLeerChar
+_retZero:
+mov eax, '0'
+_endLeerChar:
 pop ebx
 pop edx
 pop ecx
@@ -193,8 +198,14 @@ mov ebx, 1
 mov ecx, _bufferData
 mov edx, 2
 int 80h
-mov eax, 1
-add eax, 0x30
+mov bl, [EBP + 8]
+cmp bl, 0x0a
+je _retZeroesc
+mov eax, '1'
+jmp _endEscreveChar
+_retZeroesc:
+mov eax, '0'
+_endEscreveChar:
 pop ebx
 pop edx
 pop ecx

@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <algorithm>
 #include "translate.hpp"
 using namespace std;
 
@@ -105,17 +106,81 @@ void translate(string filename){
 }
 
 void translate_inst(string inst, map<string, int>& inst_code, fstream& outfile, string param){
-    size_t found;
-    string num;
+    size_t found, n;
+    string num, aux = "";
     int val;
 
-    if(found = param.find(" + ") != string::npos){
-        num = param.substr(param.rfind(" ") + 1, param.length());
-        val = stoi(num) * 4;
-        param.replace(param.rfind(" ") + 1, num.length(), to_string(val));
+    if((found = param.find(" + ")) != string::npos){
+        n = count(param.begin(), param.end(), '+');
+        if(n == 1){
+            num = param.substr(param.find("+") + 2, param.find(",") - (param.find("+") + 2));
+            val = stoi(num) * 4;
+            param.replace(param.find("+") + 2, num.length(), to_string(val));
+        }
+        else if(n == 2){
+            aux = param.substr(0, param.find(","));
+            num = aux.substr(aux.find("+") + 2, aux.find(",") - (aux.find("+") + 2));
+            val = stoi(num) * 4;
+            aux.replace(aux.find("+") + 2, num.length(), to_string(val));
+            aux = "[" + aux + "]";
+
+            param = param.substr(param.find(",") + 2, param.length());
+            num = param.substr(param.find("+") + 2, param.find(",") - (param.find("+") + 2));
+            val = stoi(num) * 4;
+            param.replace(param.find("+") + 2, num.length(), to_string(val));
+            param = "[" + param + "]";
+        }
     }
 
     switch(inst_code[inst]){
+        case 1: 
+            outfile << "add eax, DWORD [" << param << "] ; ADD" << endl;
+            break;
+        case 2: 
+            outfile << "sub eax, DWORD [" << param << "] ; SUB" << endl;
+            break;
+        case 4:
+            outfile << "cdq ;DIV" << endl;
+            outfile << "mov ebx, DWORD [" << param << "]" << endl;
+            outfile << "idiv ebx" << endl;
+            break;
+        case 5:
+            outfile << "jmp " << param << " ; JMP" << endl;
+            break;
+        case 6:
+            outfile << "cmp eax, 0 ; JMPN" << endl;
+            outfile << "jl " << param << endl;
+            break;
+        case 7:
+            outfile << "cmp eax, 0 ; JMPP" << endl;
+            outfile << "jg " << param << endl;
+            break;
+        case 8:
+            outfile << "cmp eax, 0 ; JMPZ" << endl;
+            outfile << "je " << param << endl;
+            break;
+        case 9:
+            if(found == string::npos){
+                outfile << "mov ebx, DWORD [" << param.substr(0, param.find(",")) << "] ; COPY" << endl;
+                outfile << "mov [" << param.substr(param.find(",") + 2, param.length()) << "], ebx" << endl;
+            }
+            else{
+                if(n == 1){
+                    outfile << "mov ebx, DWORD [" << param.substr(0, param.find(",")) << "] ; COPY" << endl;
+                    outfile << "mov [" << param.substr(param.find(",") + 2, param.length()) << "], ebx" << endl;
+                }
+                else if(n == 2){
+                    outfile << "mov ebx, DWORD " << aux << " ; COPY" << endl;
+                    outfile << "mov " << param << ", ebx" << endl;
+                }
+            }
+            break;
+        case 10:
+            outfile << "mov eax, DWORD [" << param << "] ; LOAD" << endl;
+            break;
+        case 11:
+            outfile << "mov [" << param << "], eax ; STORE" << endl;
+            break;
         case 12:
             outfile << "push eax ; INPUT" << endl;
             outfile << "push " << param << endl;
@@ -147,7 +212,7 @@ void translate_inst(string inst, map<string, int>& inst_code, fstream& outfile, 
         case 16:
             outfile << "push eax ; S_INPUT" << endl;
             outfile << "push " << param.substr(0, param.find(",")) << endl;
-            outfile << "push DWORD " << param.substr(param.find(" ") + 1, param.length()) << endl;
+            outfile << "push DWORD " << param.substr(param.find(",") + 2, param.length()) << endl;
             outfile << "call LeerString" << endl;
             outfile << "mov [_result], eax" << endl;
             outfile << "call _displayNchars" << endl;
@@ -156,7 +221,7 @@ void translate_inst(string inst, map<string, int>& inst_code, fstream& outfile, 
         case 17:
             outfile << "push eax ; S_OUTPUT" << endl;
             outfile << "push " << param.substr(0, param.find(",")) << endl;
-            outfile << "push DWORD " << param.substr(param.find(" ") + 1, param.length()) << endl;
+            outfile << "push DWORD " << param.substr(param.find(",") + 2, param.length()) << endl;
             outfile << "call EscreverString" << endl;
             outfile << "pop eax" << endl;
             break;
