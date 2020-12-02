@@ -223,7 +223,8 @@ push edx
 push ebx
 push esi
 mov esi, 0
-mov ecx, 25
+mov ecx, [EBP + 8]
+shr ecx, 2
 mov ebx, [EBP + 12]
 _cleanStringBuffer:
 and DWORD [ebx + esi], 0x00000000
